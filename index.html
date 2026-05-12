@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El-Mahdi Boutafrout — Ingénieur Infrastructure & Sécurité Opérationnelle</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --bg2: #0d1117;
+    --bg3: #111820;
+    --green: #00ff88;
+    --cyan: #00d4ff;
+    --red: #ff3366;
+    --text: #c9d1d9;
+    --muted: #586069;
+    --border: #1e2a36;
+    --card: #0d1420;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* SCANLINES */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.01) 2px, rgba(0,255,136,0.01) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(8,12,16,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+    text-transform: uppercase;
+  }
+
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--green);
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 .name-first { color: #fff; }
+  .hero h1 .name-last {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    display: block;
+  }
+
+  .hero-terminal {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+
+  .hero-terminal .prompt { color: var(--green); }
+  .hero-terminal .cmd { color: var(--cyan); }
+  .hero-terminal .val { color: #e6b96a; }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: var(--green);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: #080c10;
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: #00cc70;
+    box-shadow: 0 0 30px rgba(0,255,136,0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,255,136,0.08);
+    box-shadow: 0 0 20px rgba(0,255,136,0.15);
+  }
+
+  .hero-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 2;
+    position: relative;
+  }
+
+  .stat {
+    text-align: right;
+    border-right: 2px solid var(--green);
+    padding-right: 1.5rem;
+  }
+
+  .stat-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .stat-num span { color: var(--green); }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 6rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+
+  .about-text p + p { margin-top: 1.2rem; }
+
+  .highlight { color: var(--green); font-weight: 600; }
+
+  .about-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--green);
+  }
+
+  .info-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    min-width: 90px;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .info-value a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  /* EXPERIENCE */
+  .exp-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .exp-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--green), var(--border) 80%, transparent);
+  }
+
+  .exp-item {
+    position: relative;
+    padding: 0 0 3.5rem 2.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+
+  .exp-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .exp-dot {
+    position: absolute;
+    left: -2rem;
+    top: 0.4rem;
+    width: 10px;
+    height: 10px;
+    background: var(--green);
+    border: 2px solid var(--bg);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(0,255,136,0.5);
+  }
+
+  .exp-period {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .exp-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+  }
+
+  .exp-company {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    margin-bottom: 1rem;
+  }
+
+  .exp-tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .exp-tasks li {
+    font-size: 0.9rem;
+    color: var(--text);
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .exp-tasks li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+  }
+
+  .skill-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+  }
+
+  .skill-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    box-shadow: 0 0 30px rgba(0,255,136,0.05);
+  }
+
+  .skill-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .skill-cat::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(0,255,136,0.06);
+    border: 1px solid rgba(0,255,136,0.15);
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    background: rgba(0,255,136,0.12);
+    color: var(--green);
+    border-color: rgba(0,255,136,0.4);
+  }
+
+  .tag.cyan {
+    background: rgba(0,212,255,0.06);
+    border-color: rgba(0,212,255,0.15);
+  }
+
+  .tag.cyan:hover {
+    background: rgba(0,212,255,0.12);
+    color: var(--cyan);
+    border-color: rgba(0,212,255,0.4);
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .project-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .project-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(0,255,136,0.05);
+  }
+
+  .project-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .project-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .project-tag {
+    display: inline-block;
+    margin-top: 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 0.25rem 0.6rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* EDUCATION */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+  }
+
+  .edu-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .edu-period {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .edu-degree {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+
+  .edu-school {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* CONTACT */
+  .contact-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .contact-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .contact-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 3rem;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    text-decoration: none;
+    padding: 0.9rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 20px rgba(0,255,136,0.1);
+  }
+
+  .contact-link .ico { font-size: 1rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .footer-copy span { color: var(--green); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag { animation: fadeUp 0.6s ease 0.2s both; }
+  .hero h1 { animation: fadeUp 0.6s ease 0.4s both; }
+  .hero-terminal { animation: fadeUp 0.6s ease 0.6s both; }
+  .hero-cta { animation: fadeUp 0.6s ease 0.8s both; }
+  .hero-stats { animation: fadeUp 0.6s ease 1s both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 2rem; }
+    .nav-links { display: none; }
+    .hero { padding: 8rem 2rem 4rem; }
+    .hero-stats { display: none; }
+    section { padding: 4rem 2rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; }
+  }
+
+
+  /* LINKEDIN ICON */
+  .linkedin-ico {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .linkedin-ico svg { width: 16px; height: 16px; fill: currentColor; vertical-align: middle; }
+
+  /* SKILL ICON CARDS */
+  .skills-grid-icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .skill-ico-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.2rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-ico-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .skill-ico-card:hover::before { transform: scaleX(1); }
+  .skill-ico-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    box-shadow: 0 4px 20px rgba(0,255,136,0.05);
+  }
+
+  .skill-ico-card svg { width: 36px; height: 36px; }
+
+  .skill-ico-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+
+  .skill-ico-card:hover .skill-ico-name { color: var(--text); }
+
+
+  /* ══════════════════════════════════════
+     SCROLL ANIMATIONS
+  ══════════════════════════════════════ */
+
+  /* Base hidden state */
+  .anim-fade-up,
+  .anim-fade-left,
+  .anim-fade-right,
+  .anim-scale,
+  .anim-glitch {
+    opacity: 0;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .anim-fade-up    { transform: translateY(50px); transition: opacity 0.8s, transform 0.8s; }
+  .anim-fade-left  { transform: translateX(-50px); transition: opacity 0.7s, transform 0.7s; }
+  .anim-fade-right { transform: translateX(50px); transition: opacity 0.7s, transform 0.7s; }
+  .anim-scale      { transform: scale(0.88); transition: opacity 0.6s, transform 0.6s; }
+
+  /* Visible state */
+  .anim-fade-up.in,
+  .anim-fade-left.in,
+  .anim-fade-right.in,
+  .anim-scale.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Glitch reveal for section titles */
+  .anim-glitch { transition: opacity 0.01s; }
+  .anim-glitch.in { opacity: 1; }
+
+  /* Skill card stagger */
+  .skill-ico-card {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+                transform 0.5s cubic-bezier(0.16,1,0.3,1),
+                border-color 0.2s,
+                box-shadow 0.2s;
+  }
+  .skill-ico-card.in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Experience items */
+  .exp-item {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .exp-item.in { opacity: 1; transform: none; }
+
+  /* Project cards */
+  .project-card {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+                transform 0.6s cubic-bezier(0.16,1,0.3,1),
+                border-color 0.2s,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+  .project-card.in { opacity: 1; transform: translateY(0); }
+
+  /* Education cards */
+  .edu-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+                transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .edu-card.in { opacity: 1; transform: none; }
+
+  /* Info rows in about */
+  .info-row {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .info-row.in { opacity: 1; transform: none; }
+
+  /* Counter number animation */
+  .stat-num { transition: color 0.3s; }
+
+  /* Glitch keyframes */
+  @keyframes glitch1 {
+    0%   { clip-path: inset(0 0 95% 0); transform: translate(-3px, 0); }
+    20%  { clip-path: inset(30% 0 50% 0); transform: translate(3px, 0); }
+    40%  { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 0); }
+    60%  { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); }
+    80%  { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 0); }
+    100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  }
+
+  @keyframes glitch2 {
+    0%   { clip-path: inset(80% 0 0 0); transform: translate(3px, 0); color: #00ff88; }
+    25%  { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 0); color: #00d4ff; }
+    50%  { clip-path: inset(50% 0 30% 0); transform: translate(2px, 0); color: #fff; }
+    75%  { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 0); color: #00ff88; }
+    100% { clip-path: inset(0 0 0 0); transform: translate(0); color: inherit; }
+  }
+
+  .glitch-wrap { position: relative; display: inline-block; }
+
+  .glitch-wrap::before,
+  .glitch-wrap::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+  }
+
+  .glitch-wrap.run::before {
+    animation: glitch1 0.5s steps(1) forwards;
+    opacity: 0.8;
+    color: #00ff88;
+  }
+  .glitch-wrap.run::after {
+    animation: glitch2 0.5s steps(1) forwards;
+    opacity: 0.6;
+    color: #00d4ff;
+    animation-delay: 0.05s;
+  }
+
+  /* Line reveal animation */
+  @keyframes lineReveal {
+    from { width: 0; }
+    to   { width: 100%; }
+  }
+
+  .section-line-anim {
+    height: 1px;
+    background: linear-gradient(90deg, var(--green), transparent);
+    width: 0;
+    transition: width 1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .section-line-anim.in { width: 100%; }
+
+  /* Typing cursor for terminal in hero */
+  @keyframes typeIn {
+    from { width: 0; }
+    to   { width: 100%; }
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--green);
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatUp var(--dur, 8s) linear var(--delay, 0s) infinite;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 0.4; }
+    90%  { opacity: 0.15; }
+    100% { transform: translateY(-10vh) translateX(var(--drift, 30px)); opacity: 0; }
+  }
+
+  /* Scanline sweep on section enter */
+  @keyframes scanSweep {
+    0%   { top: 0; opacity: 0.15; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .scan-sweep {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+  }
+
+  .scan-sweep.run {
+    animation: scanSweep 0.8s ease-out forwards;
+  }
+
+  /* Number count-up highlight */
+  @keyframes countPop {
+    0%   { color: var(--green); transform: scale(1.2); }
+    100% { color: #fff; transform: scale(1); }
+  }
+
+  .stat-num.pop { animation: countPop 0.4s ease forwards; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">EMB<span>/</span>portfolio</div>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#experience">Expérience</a></li>
+    <li><a href="#skills">Compétences</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#education">Formation</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Disponible · Casablanca, Maroc</div>
+    <h1>
+      <span class="name-first">El-Mahdi</span>
+      <span class="name-last">Boutafrout</span>
+    </h1>
+    <div class="hero-terminal">
+      <div><span class="prompt">$ </span><span class="cmd">whoami</span></div>
+      <div><span class="val">Infrastructure & Operational Security Engineer</span></div>
+      <div style="margin-top:0.5rem"><span class="prompt">$ </span><span class="cmd">experience</span></div>
+      <div><span class="val">+5 ans · Secteur financier & hôtelier · Infrastructures critiques · Multi-sites</span></div>
+      <div style="margin-top:0.5rem"><span class="prompt">$ </span><span class="cmd">status</span></div>
+      <div><span class="val">Master Pro Ingénierie Sécurité & Administration des Réseaux et Systèmes · ENSA Berrechid 2025</span> <span class="cursor"></span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Me contacter</a>
+      <a href="#experience" class="btn btn-outline">Voir le parcours</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">5<span>+</span></div>
+      <div class="stat-label">Ans d'expérience</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Entreprises</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4<span>+</span></div>
+      <div class="stat-label">Projets majeurs</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">À propos</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        Ingénieur passionné par la <span class="highlight">sécurité des infrastructures IT critiques</span>, j'évolue depuis plus de 5 ans dans l'administration, la sécurisation et la supervision de systèmes complexes.
+      </p>
+      <p>
+        Mon expertise couvre la <span class="highlight">sécurité réseau avancée</span> (FortiGate, Palo Alto Networks, F5), les environnements Microsoft/Linux, la virtualisation VMware et les solutions de supervision comme Dynatrace et Zabbix.
+      </p>
+      <p>
+        Actuellement chez <span class="highlight">WAFACASH</span>, je gère la sécurisation des accès réseau, l'administration des firewalls et la supervision des infrastructures IT dans un contexte financier à haute disponibilité.
+      </p>
+    </div>
+    <div class="about-info">
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><a href="mailto:mahdi.boutafrout@gmail.com">mahdi.boutafrout@gmail.com</a></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Téléphone</span>
+        <span class="info-value">+212 6 63 74 79 62</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Localisation</span>
+        <span class="info-value">Casablanca, Maroc</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">LinkedIn</span>
+        <span class="info-value"><a href="https://linkedin.com/in/el-mahdiboutafrout" target="_blank" class="linkedin-ico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> el-mahdiboutafrout</a></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Langues</span>
+        <span class="info-value">Arabe · Français · Anglais</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Permis</span>
+        <span class="info-value">Catégorie B</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" style="background: var(--bg2);">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Expérience professionnelle</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="exp-timeline">
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Juin 2023 — Présent</div>
+      <div class="exp-title">Administrateur Réseau & Sécurité Informatique</div>
+      <div class="exp-company">WAFACASH · Casablanca</div>
+      <ul class="exp-tasks">
+        <li>Administration et sécurisation des accès réseau via firewalls FortiGate</li>
+        <li>Configuration et gestion des politiques de sécurité Palo Alto Networks</li>
+        <li>Administration des solutions F5 Networks (load balancing, haute disponibilité)</li>
+        <li>Gestion des antivirus Kaspersky et Symantec (postes et serveurs)</li>
+        <li>Administration NAC Aruba ClearPass, FortiMail, FortiAnalyzer, FortiAuthenticator</li>
+        <li>Administration et configuration des switches Cisco</li>
+        <li>Supervision des infrastructures IT via Dynatrace</li>
+        <li>Administration Active Directory (comptes, GPO, droits d'accès)</li>
+        <li>Administration des environnements virtuels VMware vCenter Server</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Février 2022 — Juin 2023</div>
+      <div class="exp-title">Administrateur Infrastructure SI</div>
+      <div class="exp-company">BAB RIZQ JAMEEL · Casablanca</div>
+      <ul class="exp-tasks">
+        <li>Administration des environnements virtuels VMware vCenter Server</li>
+        <li>Administration et gestion des firewalls FortiGate</li>
+        <li>Configuration des switches Cisco et HP</li>
+        <li>Supervision IT via Zabbix</li>
+        <li>Déploiement GLPI (ITSM) : workflows, SLA et reporting</li>
+        <li>Gestion des sauvegardes via Veeam Backup & Replication</li>
+        <li>Support technique N1/N2 à distance et sur site</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Septembre 2021 — Janvier 2022</div>
+      <div class="exp-title">Support IT</div>
+      <div class="exp-company">Vigon Systems · Naoura Barrière Hôtel, Marrakech</div>
+      <ul class="exp-tasks">
+        <li>Administration Active Directory (comptes, GPO, droits d'accès)</li>
+        <li>Supervision des équipements via Zabbix</li>
+        <li>Gestion et optimisation des infrastructures Wi-Fi (Ruckus, Unifi)</li>
+        <li>Support technique et résolution des incidents systèmes/réseau</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Janvier 2020 — Août 2021</div>
+      <div class="exp-title">Technicien Maintenance IT</div>
+      <div class="exp-company">SLS Intégrateur High-Tech · Casablanca</div>
+      <ul class="exp-tasks">
+        <li>Installation et maintenance des infrastructures IT (postes, serveurs, réseau)</li>
+        <li>Câblage réseau, configuration de switches, mise en service</li>
+        <li>Déploiement des systèmes de sécurité (vidéosurveillance, contrôle d'accès)</li>
+        <li>Diagnostic et résolution des incidents matériels et réseau</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Compétences techniques</h2>
+    <div class="section-line"></div>
+  </div>
+  
+    <div class="skills-grid-icons">
+
+      <!-- FortiGate -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#e74c3c"/><text x="12" y="16" text-anchor="middle" font-size="7.5" font-family="Arial" font-weight="bold" fill="white">FORTI</text></svg>
+        <div class="skill-ico-name">FortiGate</div>
+      </div>
+
+      <!-- Palo Alto -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#e67e22"/><text x="12" y="9.5" text-anchor="middle" font-size="5.5" font-family="Arial" font-weight="bold" fill="white">PALO</text><text x="12" y="16.5" text-anchor="middle" font-size="5.5" font-family="Arial" font-weight="bold" fill="white">ALTO</text></svg>
+        <div class="skill-ico-name">Palo Alto</div>
+      </div>
+
+      <!-- F5 Networks -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#c0392b"/><text x="12" y="16" text-anchor="middle" font-size="12" font-family="Arial" font-weight="bold" fill="white">F5</text></svg>
+        <div class="skill-ico-name">F5 BIG-IP</div>
+      </div>
+
+      <!-- VMware -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#607D8B"><rect width="24" height="24" rx="4" fill="#607D8B"/><path d="M4 8l3 8 2.5-6 2.5 6 3-8h-2l-1 3-2-5-2 5-1-3z" fill="white"/><text x="17" y="16" text-anchor="middle" font-size="5" font-family="Arial" font-weight="bold" fill="#4FC3F7">VM</text></svg>
+        <div class="skill-ico-name">VMware vSphere</div>
+      </div>
+
+      <!-- Cisco -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#1565C0"/><text x="12" y="16" text-anchor="middle" font-size="7" font-family="Arial" font-weight="bold" fill="white">CISCO</text></svg>
+        <div class="skill-ico-name">Cisco Switches</div>
+      </div>
+
+      <!-- Aruba ClearPass -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#F47920"/><text x="12" y="10" text-anchor="middle" font-size="5.5" font-family="Arial" font-weight="bold" fill="white">ARUBA</text><text x="12" y="17" text-anchor="middle" font-size="4.5" font-family="Arial" font-weight="bold" fill="white">ClearPass</text></svg>
+        <div class="skill-ico-name">NAC Aruba</div>
+      </div>
+
+      <!-- Windows Server -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#0078D4"/><rect x="4" y="4" width="7" height="7" fill="white"/><rect x="13" y="4" width="7" height="7" fill="white"/><rect x="4" y="13" width="7" height="7" fill="white"/><rect x="13" y="13" width="7" height="7" fill="white"/></svg>
+        <div class="skill-ico-name">Windows Server</div>
+      </div>
+
+      <!-- Linux -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#222"/><text x="12" y="9" text-anchor="middle" font-size="9" font-family="Arial">🐧</text><text x="12" y="19" text-anchor="middle" font-size="5" font-family="Arial" fill="#ffcc00">Linux</text></svg>
+        <div class="skill-ico-name">Linux</div>
+      </div>
+
+      <!-- Active Directory -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#0078D4"/><circle cx="12" cy="9" r="4" fill="none" stroke="white" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        <div class="skill-ico-name">Active Directory</div>
+      </div>
+
+      <!-- Microsoft 365 -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#D83B01"/><text x="12" y="10" text-anchor="middle" font-size="5.5" font-family="Arial" font-weight="bold" fill="white">M365</text><text x="12" y="17" text-anchor="middle" font-size="4" font-family="Arial" fill="white">Microsoft</text></svg>
+        <div class="skill-ico-name">Microsoft 365</div>
+      </div>
+
+      <!-- Dynatrace -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#1496FF"/><text x="12" y="10" text-anchor="middle" font-size="5" font-family="Arial" font-weight="bold" fill="white">DYNA</text><text x="12" y="17" text-anchor="middle" font-size="5" font-family="Arial" font-weight="bold" fill="white">TRACE</text></svg>
+        <div class="skill-ico-name">Dynatrace</div>
+      </div>
+
+      <!-- Zabbix -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#CC3333"/><text x="12" y="15" text-anchor="middle" font-size="7" font-family="Arial" font-weight="bold" fill="white">ZABBIX</text></svg>
+        <div class="skill-ico-name">Zabbix</div>
+      </div>
+
+      <!-- Veeam -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#00B336"/><text x="12" y="10" text-anchor="middle" font-size="5" font-family="Arial" font-weight="bold" fill="white">VEEAM</text><text x="12" y="17" text-anchor="middle" font-size="4" font-family="Arial" fill="white">Backup</text></svg>
+        <div class="skill-ico-name">Veeam Backup</div>
+      </div>
+
+      <!-- GLPI -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#F8A800"/><text x="12" y="15" text-anchor="middle" font-size="8" font-family="Arial" font-weight="bold" fill="white">GLPI</text></svg>
+        <div class="skill-ico-name">GLPI ITSM</div>
+      </div>
+
+      <!-- FortiMail -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#c0392b"/><path d="M4 7h16v10H4z" fill="none" stroke="white" stroke-width="1.5"/><path d="M4 7l8 6 8-6" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        <div class="skill-ico-name">FortiMail</div>
+      </div>
+
+      <!-- VPN IPSec -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#1B5E20"/><path d="M12 3 L19 7 L19 13 C19 17 12 21 12 21 C12 21 5 17 5 13 L5 7 Z" fill="none" stroke="white" stroke-width="1.5"/><path d="M9 12l2 2 4-4" fill="none" stroke="white" stroke-width="1.5"/></svg>
+        <div class="skill-ico-name">VPN SSL/IPSec</div>
+      </div>
+
+      <!-- SD-WAN -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#6A1B9A"/><circle cx="12" cy="12" r="4" fill="none" stroke="white" stroke-width="1.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="white" stroke-width="1.5"/></svg>
+        <div class="skill-ico-name">SD-WAN</div>
+      </div>
+
+      <!-- Exchange -->
+      <div class="skill-ico-card">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#0078D4"/><text x="12" y="10" text-anchor="middle" font-size="5" font-family="Arial" font-weight="bold" fill="white">EXCH</text><text x="12" y="17" text-anchor="middle" font-size="4" font-family="Arial" fill="white">Exchange</text></svg>
+        <div class="skill-ico-name">Exchange</div>
+      </div>
+
+    </div>
+
+
+  </section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background: var(--bg2);">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Projets réalisés</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-icon">🔄</div>
+      <div class="project-title">Migration MPLS vers SD-WAN</div>
+      <div class="project-desc">Amélioration de la résilience réseau et optimisation des performances inter-sites. Réduction des coûts et meilleure flexibilité de gestion.</div>
+      <span class="project-tag">Infrastructure Réseau</span>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">📡</div>
+      <div class="project-title">Supervision proactive via Zabbix</div>
+      <div class="project-desc">Mise en place d'une supervision complète ayant permis la réduction des incidents récurrents et l'amélioration significative de la disponibilité des services.</div>
+      <span class="project-tag">Monitoring</span>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🔐</div>
+      <div class="project-title">Sécurisation Active Directory</div>
+      <div class="project-desc">Durcissement de l'environnement AD : gestion des privilèges, contrôle des accès et segmentation réseau pour renforcer la protection des ressources critiques.</div>
+      <span class="project-tag">Cybersécurité</span>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🎫</div>
+      <div class="project-title">Déploiement ITSM GLPI</div>
+      <div class="project-desc">Structuration complète de la solution : mise en place des workflows, gestion des SLA et élaboration des reportings opérationnels pour optimiser le support IT.</div>
+      <span class="project-tag">ITSM</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Formation</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="edu-grid">
+
+    <div class="edu-card" style="border-top: 2px solid var(--green);">
+      <div class="edu-period">2023 — 2025</div>
+      <div class="edu-degree">Master Professionnel<br>Ingénierie Sécurité & Administration des Réseaux et Systèmes</div>
+      <div class="edu-school">École Nationale des Sciences Appliquées, Berrechid</div>
+    </div>
+
+    <div class="edu-card" style="border-top: 2px solid var(--cyan);">
+      <div class="edu-period">2020 — 2021</div>
+      <div class="edu-degree">Licence Professionnelle<br>Ingénierie Systèmes, Réseaux et Sécurité</div>
+      <div class="edu-school">Faculté des Sciences et Techniques Hassan 1er, Settat</div>
+    </div>
+
+    <div class="edu-card" style="border-top: 2px solid var(--muted);">
+      <div class="edu-period">2017 — 2019</div>
+      <div class="edu-degree">Technicien Spécialisé<br>Réseau Informatique</div>
+      <div class="edu-school">ISTA NTIC, Béni Mellal</div>
+    </div>
+
+    <div class="edu-card" style="border-top: 2px solid var(--muted);">
+      <div class="edu-period">2015 — 2016</div>
+      <div class="edu-degree">Baccalauréat<br>Sciences</div>
+      <div class="edu-school">Lycée Sidi Ben El Ouidane, Afourer</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="background: var(--bg2);">
+  <div class="contact-wrapper">
+    <h2 class="contact-title">Travaillons ensemble</h2>
+    <p class="contact-sub">Ouvert aux opportunités en Infrastructure & Sécurité Opérationnelle</p>
+    <div class="contact-links">
+      <a href="mailto:mahdi.boutafrout@gmail.com" class="contact-link">
+        <span class="ico">✉️</span> mahdi.boutafrout@gmail.com
+      </a>
+      <a href="tel:+212663747962" class="contact-link">
+        <span class="ico">📞</span> +212 6 63 74 79 62
+      </a>
+      <a href="https://linkedin.com/in/el-mahdiboutafrout" target="_blank" class="contact-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;flex-shrink:0"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn — el-mahdiboutafrout
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 <span>El-Mahdi Boutafrout</span> · Ingénieur Infrastructure & Sécurité Opérationnelle</div>
+  <div class="footer-copy" style="color: var(--green);">Casablanca, Maroc 🇲🇦</div>
+</footer>
+
+<script>
+  // ── PARTICLES ──────────────────────────────
+  (function() {
+    const container = document.createElement('div');
+    container.className = 'particles';
+    document.body.prepend(container);
+    const count = 25;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.setProperty('--dur', (6 + Math.random() * 10) + 's');
+      p.style.setProperty('--delay', (Math.random() * 10) + 's');
+      p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+      p.style.left = (Math.random() * 100) + '%';
+      container.appendChild(p);
+    }
+  })();
+
+  // ── GLITCH TITLES ──────────────────────────
+  function initGlitch() {
+    document.querySelectorAll('.section-title').forEach(el => {
+      el.classList.add('anim-glitch');
+      const wrap = document.createElement('span');
+      wrap.className = 'glitch-wrap';
+      wrap.setAttribute('data-text', el.textContent);
+      wrap.innerHTML = el.innerHTML;
+      el.innerHTML = '';
+      el.appendChild(wrap);
+    });
+  }
+
+  // ── SCAN SWEEPS ─────────────────────────────
+  function addScanSweeps() {
+    document.querySelectorAll('section').forEach(sec => {
+      const sweep = document.createElement('div');
+      sweep.className = 'scan-sweep';
+      sec.style.position = 'relative';
+      sec.style.overflow = 'hidden';
+      sec.appendChild(sweep);
+      sec._sweep = sweep;
+    });
+  }
+
+  // ── SECTION LINE ANIM ───────────────────────
+  function initSectionLines() {
+    document.querySelectorAll('.section-line').forEach(el => {
+      el.classList.add('section-line-anim');
+    });
+  }
+
+  // ── COUNT-UP ANIMATION ──────────────────────
+  function countUp(el, target, duration) {
+    const start = performance.now();
+    const update = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target);
+      if (progress < 1) requestAnimationFrame(update);
+      else {
+        el.textContent = target + '+';
+        el.classList.add('pop');
+      }
+    };
+    requestAnimationFrame(update);
+  }
+
+  // ── INTERSECTION OBSERVER ───────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const delay = +(el.dataset.delay || 0);
+
+      setTimeout(() => {
+        el.classList.add('in', 'visible');
+
+        // Glitch effect on section titles
+        const wrap = el.querySelector('.glitch-wrap');
+        if (wrap) {
+          wrap.classList.add('run');
+          setTimeout(() => wrap.classList.remove('run'), 600);
+        }
+
+        // Scan sweep on sections
+        if (el._sweep) {
+          el._sweep.classList.remove('run');
+          void el._sweep.offsetWidth;
+          el._sweep.classList.add('run');
+        }
+
+        // Count-up on stats
+        if (el.classList.contains('stat')) {
+          const numEl = el.querySelector('.stat-num');
+          if (numEl) {
+            const match = numEl.textContent.match(/\d+/);
+            if (match) countUp(numEl, parseInt(match[0]), 1200);
+          }
+        }
+
+      }, delay);
+
+      io.unobserve(el);
+    });
+  }, { threshold: 0.12 });
+
+  // ── INIT ────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    initGlitch();
+    addScanSweeps();
+    initSectionLines();
+
+    // Fade up
+    document.querySelectorAll('.about-text, .section-header, .contact-wrapper, .section-line-anim').forEach((el, i) => {
+      el.classList.add('anim-fade-up');
+      el.dataset.delay = i * 80;
+      io.observe(el);
+    });
+
+    // Fade left
+    document.querySelectorAll('.about-info').forEach(el => {
+      el.classList.add('anim-fade-right');
+      io.observe(el);
+    });
+
+    // Info rows stagger
+    document.querySelectorAll('.info-row').forEach((el, i) => {
+      el.dataset.delay = i * 70;
+      io.observe(el);
+    });
+
+    // Section titles (glitch)
+    document.querySelectorAll('.section-title').forEach(el => {
+      io.observe(el);
+    });
+
+    // Section lines
+    document.querySelectorAll('.section-line-anim').forEach(el => {
+      io.observe(el);
+    });
+
+    // Skill cards stagger
+    document.querySelectorAll('.skill-ico-card').forEach((el, i) => {
+      el.dataset.delay = i * 55;
+      io.observe(el);
+    });
+
+    // Exp items stagger
+    document.querySelectorAll('.exp-item').forEach((el, i) => {
+      el.dataset.delay = i * 140;
+      io.observe(el);
+    });
+
+    // Project cards stagger
+    document.querySelectorAll('.project-card').forEach((el, i) => {
+      el.dataset.delay = i * 100;
+      io.observe(el);
+    });
+
+    // Edu cards stagger
+    document.querySelectorAll('.edu-card').forEach((el, i) => {
+      el.dataset.delay = i * 90;
+      io.observe(el);
+    });
+
+    // Stats count-up
+    document.querySelectorAll('.stat').forEach(el => {
+      io.observe(el);
+    });
+
+    // Sections (for scan sweep)
+    document.querySelectorAll('section').forEach(el => {
+      io.observe(el);
+    });
+  });
+
+  // ── SMOOTH NAV SCROLL ───────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ── NAV ACTIVE ON SCROLL ────────────────────
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 150) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
